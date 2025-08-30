@@ -83,7 +83,7 @@
     return d.toLocaleString();
   }
 
-  function matchesFilter(row) {
+function matchesFilter(row) {
     const q = (searchInput.value || "").toLowerCase();
     if (!q) return true;
     return (
@@ -91,14 +91,14 @@
       (row.owner || "").toLowerCase().includes(q) ||
       (row.gateId || "").toLowerCase().includes(q) ||
       (row.status || "").toLowerCase().includes(q) ||
-      (row.deviceIp || "").toLowerCase().includes(q)
-    );
-  }
+      (row.kartu || "").toLowerCase().includes(q)
+    );
+  }
 
   function renderRow(row) {
     if (!matchesFilter(row)) return;
 
-    const tr = document.createElement('tr');
+   const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${++rowCount}</td>
       <td>${fmtTime(row.ts)}</td>
@@ -106,10 +106,10 @@
       <td>${row.owner || ""}</td>
       <td>${row.gateId || ""}</td>
       <td>${row.status || ""}</td>
-      <td>${row.deviceIp || ""}</td>
+      <td>${row.kartu || ""}</td>
     `;
-    tbody.prepend(tr); // terbaru di atas
-  }
+    tbody.prepend(tr); // terbaru di atas
+  }
 
   async function resolveOwner(uid) {
     if (cardCache.has(uid)) return cardCache.get(uid);
@@ -146,7 +146,7 @@
     const rows = Array.from(tbody.querySelectorAll('tr')).reverse(); // kronologi
     tbody.innerHTML = "";
     rowCount = 0;
-    rows.forEach(tr => {
+   rows.forEach(tr => {
       const cols = tr.querySelectorAll('td');
       const row = {
         ts: new Date(cols[1].textContent).getTime(),
@@ -154,8 +154,8 @@
         owner: cols[3].textContent,
         gateId: cols[4].textContent,
         status: cols[5].textContent,
-        deviceIp: cols[6].textContent
-      };
+       kartu: cols[6].textContent
+      };
       if (matchesFilter(row)) {
         const tr2 = document.createElement('tr');
         tr2.innerHTML = tr.innerHTML.replace(/^<td>\d+<\/td>/, `<td>${++rowCount}</td>`);
@@ -166,7 +166,7 @@
 
   // Export CSV
   window.exportCSV = function() {
-    const rows = [["No","Waktu","UID","Pemilik","Gate","Status","Device IP"]];
+    const rows = [["No","Waktu","UID","Pemilik","Gate","Status","kartu"]];
     Array.from(tbody.querySelectorAll('tr')).forEach((tr, i) => {
       const tds = tr.querySelectorAll('td');
       rows.push([i+1, tds[1].textContent, tds[2].textContent, tds[3].textContent, tds[4].textContent, tds[5].textContent, tds[6].textContent]);
