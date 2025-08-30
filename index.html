@@ -20,7 +20,7 @@
   </div>
 
   <div class="mb-3 no-print d-flex gap-2">
-    <button class="btn btn-success" onclick="window.print()">🖨️ Cetak</button>
+    <button class="btn btn-success" onclick="window.print()">🖨 Cetak</button>
     <button class="btn btn-warning" onclick="exportCSV()">📂 Export CSV</button>
     <span id="statusBadge" class="badge text-bg-secondary align-self-center">Menghubungkan...</span>
   </div>
@@ -37,7 +37,7 @@
               <th>Pemilik</th>
               <th>Gate</th>
               <th>Status</th>
-              <th>Device IP</th>
+              <th>kartu</th>
             </tr>
           </thead>
           <tbody id="tbody"></tbody>
@@ -55,7 +55,7 @@
   // TODO: Ganti konfigurasi
  const firebaseConfig = {
   apiKey: "AIzaSyCK41p3Ufc-KFTMGhdzwSKbxDiWP2enjc0",
-  authDomain: "gerbang-61ad4.web.app",
+  authDomain: "gerbang-61ad4.firebaseapp.com",
   databaseURL: "https://gerbang-61ad4-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "gerbang-61ad4",
   storageBucket: "gerbang-61ad4.firebasestorage.app",
@@ -83,7 +83,7 @@
     return d.toLocaleString();
   }
 
-function matchesFilter(row) {
+  function matchesFilter(row) {
     const q = (searchInput.value || "").toLowerCase();
     if (!q) return true;
     return (
@@ -92,13 +92,13 @@ function matchesFilter(row) {
       (row.gateId || "").toLowerCase().includes(q) ||
       (row.status || "").toLowerCase().includes(q) ||
       (row.kartu || "").toLowerCase().includes(q)
-    );
-  }
+    );
+  }
 
   function renderRow(row) {
     if (!matchesFilter(row)) return;
 
-   const tr = document.createElement('tr');
+    const tr = document.createElement('tr');
     tr.innerHTML = `
       <td>${++rowCount}</td>
       <td>${fmtTime(row.ts)}</td>
@@ -108,12 +108,12 @@ function matchesFilter(row) {
       <td>${row.status || ""}</td>
       <td>${row.kartu || ""}</td>
     `;
-    tbody.prepend(tr); // terbaru di atas
-  }
+    tbody.prepend(tr); // terbaru di atas
+  }
 
   async function resolveOwner(uid) {
     if (cardCache.has(uid)) return cardCache.get(uid);
-    const snap = await get(child(ref(db), `cards/${uid}/owner`));
+    const snap = await get(child(ref(db), cards/${uid}/owner));
     const owner = snap.exists() ? snap.val() : "";
     cardCache.set(uid, owner);
     return owner;
@@ -146,7 +146,7 @@ function matchesFilter(row) {
     const rows = Array.from(tbody.querySelectorAll('tr')).reverse(); // kronologi
     tbody.innerHTML = "";
     rowCount = 0;
-   rows.forEach(tr => {
+    rows.forEach(tr => {
       const cols = tr.querySelectorAll('td');
       const row = {
         ts: new Date(cols[1].textContent).getTime(),
@@ -155,10 +155,10 @@ function matchesFilter(row) {
         gateId: cols[4].textContent,
         status: cols[5].textContent,
        kartu: cols[6].textContent
-      };
+      };
       if (matchesFilter(row)) {
         const tr2 = document.createElement('tr');
-        tr2.innerHTML = tr.innerHTML.replace(/^<td>\d+<\/td>/, `<td>${++rowCount}</td>`);
+        tr2.innerHTML = tr.innerHTML.replace(/^<td>\d+<\/td>/, <td>${++rowCount}</td>);
         tbody.prepend(tr2);
       }
     });
@@ -171,7 +171,7 @@ function matchesFilter(row) {
       const tds = tr.querySelectorAll('td');
       rows.push([i+1, tds[1].textContent, tds[2].textContent, tds[3].textContent, tds[4].textContent, tds[5].textContent, tds[6].textContent]);
     });
-    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+    const csv = rows.map(r => r.map(v => "${String(v).replace(/"/g,'""')}").join(",")).join("\n");
     const blob = new Blob([csv], {type: "text/csv"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -181,4 +181,3 @@ function matchesFilter(row) {
 </script>
 </body>
 </html>
-
